@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Related XMLSchema file: conf/schemas/scenario.xsd -->
+<scenario>
+
+    <parameter name="[bool]" operation="boolean.random"/>
+    <exit  name="exit FAILED" failed="[bool]" exception="PROBLEM"/>
+    <pause seconds="10000000" state="true"  name="pause"/>
+    
+    <finally>
+        <exit  name="exit" failed="false"/>
+    </finally>
+</scenario>

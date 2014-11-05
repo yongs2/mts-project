@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<scenario>
+    <!-- test exists / create / delete -->
+
+    <parameter name="[result1]" operation="string.tobinary"   value="123" />
+    <parameter name="[result2]" operation="binary.parse"      value="h31 h32 h33" />
+    <test parameter="[result1]" condition="binary.equals"     value="[result2]"/>
+    
+    <parameter name= "[result3]" operation ="binary.parse" value="10:4"/>
+    <test parameter="[result3]" condition="binary.equals"     value="0000000a"/>
+    
+    <parameter name="[result2]" operation="binary.tostring"   value="[result1]" />
+    <test parameter="[result2]" condition="string.equals"     value="123"/>
+    
+    <parameter name="[result2]" operation="binary.parse"      value="h32" />
+    <test parameter="[result1]" condition="binary.contains"   value="[result2]"/>
+    
+    <parameter name="[length1]" operation="binary.length"      value="[result1]" />
+    <test parameter="[length1]" condition="number.equals"   value="3"/>
+    <parameter name="[length2]" operation="binary.length"      value="[result2]" />
+    <test parameter="[length1]" condition="number.equals"   value="3"/>
+    
+    <parameter name="[result3]" operation="binary.indexof"    value="[result1]" value2="[result2]"/>
+    <test parameter="[result3]" condition="string.equals"            value="1"/>
+    
+    <parameter name="[result4]" operation="binary.tobase64"   value="31323334" />
+    <parameter name="[result5]" operation="binary.frombase64" value="[result4]" />
+    
+    <test parameter="[result5]" condition="binary.equals"     value="31323334"/>
+
+    <parameter name="[result5]" operation="binary.indexof"    value="3132333431323334" value2="3233" value3="3"/>
+    <test parameter="[result5]" condition="string.equals"    value="5"/>
+
+    <parameter name="[result5]" operation="binary.subbinary"  value="3132333431323334" value2="5" value3="2"/>
+    <test parameter="[result5]" condition="binary.equals"     value="3233"/>
+
+    <parameter name="[result]"  operation="binary.random" value="8"/>
+    <parameter name="[result6]" operation="set" value="09d81fa8" />
+
+    <parameter name="[secret]" operation="string.tobinary" value="0123456789012345"/>
+    <parameter name="[data]"   operation="string.tobinary" value="myDatas"/>
+    <!-- do some padding to datas; need a multiple of 16 bytes -->
+    <parameter name="[data.length]"   operation="string.length" value="[data]"/>
+    <parameter name="[data.length]"   operation="number.divide" value="[data.length]" value2="2" />
+    <parameter name="[data.overhead]"   operation="number.modulo" value="[data.length]" value2="16" />
+    <if>
+        <condition><test parameter="[data.overhead]" condition="number.greaterthan" value="0" /></condition>
+        <then>
+            <parameter name="[data.padding]" operation="number.substract" value="16" value2="[data.overhead]" />
+            <parameter name="[data.padding]" operation="number.multiply" value="[data.padding]" value2="2" />
+            <parameter name="[data.padding]" operation="list.set" value="0" value2="[data.padding]" />
+            <parameter name="[data]" operation="set" value="[data][data.padding(0)]" />
+        </then>
+    </if>
+
+    <parameter name="[binary]" operation="set" value="00000000000000000000000000000000"/>
+    <parameter name="[encrypted]"  operation="binary.encrypt" value="[data]" value2="AES/CBC/NoPadding" value3="[secret]" value4="[binary]"/>
+    <parameter name="[decrypted]"  operation="binary.decrypt" value="[encrypted]" value2="AES/CBC/NoPadding" value3="[secret]" value4="[binary]"/>
+    <test parameter="[data]" condition="binary.equals"     value="[decrypted]"/>
+
+    <parameter name="[binary]" operation="set" value="f0f1f2f3f4f5f6f7f8f9f9f9f9f8f7f6f5f4f3f2f2f0"/>
+    <parameter name="[statMax]" operation="binary.statMax" value="[binary]"/>
+    <test parameter="[statMax]" condition="binary.equals"     value="f9"/>
+    <parameter name="[statMin]" operation="binary.statMin" value="[binary]"/>
+    <test parameter="[statMin]" condition="binary.equals"     value="f0"/>
+    <parameter name="[statAverage]" operation="binary.statAverage" value="[binary]"/>
+    <test parameter="[statAverage]" condition="binary.equals"     value="f5"/>
+    <parameter name="[statVariance]" operation="binary.statVariance" value="[binary]"/>
+    <test parameter="[statVariance]" condition="number.equals"     value="9"/>
+    <parameter name="[statDeviation]" operation="binary.statDeviation" value="[binary]"/>
+    <test parameter="[statDeviation]" condition="number.equals"     value="3"/>
+    <parameter name="[statPopular]" operation="binary.statPopular" value="[binary]"/>
+    <test parameter="[statPopular]" condition="binary.equals"     value="f9"/>
+    <parameter name="[statPopular]" operation="binary.statMaxFreq" value="[binary]"/>
+    <test parameter="[statPopular]" condition="number.equals" value="0.181818"/>
+    <parameter name="[binarytonumber]" operation="binary.toNumber" value="[result6]" />
+    <test parameter="[binarytonumber]" condition="number.equals" value="165158824" />
+    
+    <parameter name="[binaryfromip]" operation="binary.fromIp" value="172.6.21.112" />
+    <test parameter="[binaryfromip]" condition="string.equals" value="ac061570" />
+    <parameter name="[binarytoip]" operation="binary.toIp" value="ac061570" />
+    <test parameter="[binarytoip]" condition="string.equals" value="172.6.21.112" />
+    
+    <parameter name="[binaryfromip]" operation="binary.fromIp" value="[2a01:cf00:33:5::6e01]" />
+    <test parameter="[binaryfromip]" condition="string.equals" value="2a01cf00003300050000000000006e01" />
+    <parameter name="[binarytoip]" operation="binary.toIp" value="2a01cf00003300050000000000006e01" />
+    <test parameter="[binarytoip]" condition="string.equals" value="[2a01:cf00:33:5::6e01]" />
+
+    <parameter name="[diff01]" operation="set" value="0100010100000098020000080000006600060008000000650210007e000000010000000203020001090103070b044302000804430100085e625c4804000000016b1e281c060700118605010101a011600f80020780a1090607040000010015026c34a13202010102012e302a9f810407913366600567f98207913366317071f3041411080b913366600567f70000a906f3f97c3e9f03" />
+    <parameter name="[diff02]" operation="set" value="0100010100000094020000080000006600060008000000650210007c000000010000000203020001090103070b044302000804430100085c625a4804000000016b1e281c060700118605010101a011600f80020780a1090607040000010015026c32a13002010102012e302884    07913366600567f98207913366317071f3041411080b913366600567f70000a906f3f97c3e9f03" />
+    <parameter name="[result]" operation="set" value="              04                                      02                                                      02  02                                                                              02  02              021BXXXX                                                                              " />
+    <!--parameter name="[result1]" operation="binary.difference" value="[diff01]" value2="[diff02]" />
+    <test parameter="[result1]" condition="string.equals" value="[result]" /-->
+    <!--parameter name="[result2]" operation="binary.difference" value="[diff02]" value2="[diff01]" />
+    <test parameter="[result2]" condition="string.equals" value="[result]" /-->
+    
+    <parameter name="[diff01(0)]" operation="set" value="f0123456781200780090001155" />
+    <parameter name="[diff01(1)]" operation="set" value="f0123456781200780090001155" />
+    <parameter name="[diff02(0)]" operation="set" value="fedcba123456120078345678900011" />
+    <parameter name="[diff02(1)]" operation="set" value="fedcba123456120078345678900011" />
+    <parameter name="[result]" operation="set" value="0EXXXX      XX      34XXXX      XX" />
+    <parameter name="[result1]" operation="binary.difference" value="[diff01]" value2="[diff02]" />
+    <test parameter="[result1]" condition="string.equals" value="[result]" />
+    <test parameter="[diff01]" condition="string.equals" value="f0    1234567812007800    90001155" />
+    <test parameter="[diff02]" condition="string.equals" value="fedcba123456  120078345678900011  " />
+    <parameter name="[result2]" operation="binary.difference" value="[diff02]" value2="[diff01]" />
+    <test parameter="[result2]" condition="string.equals" value="[result]" />
+    <test parameter="[diff01]" condition="string.equals" value="f0    1234567812007800    90001155" />
+    <test parameter="[diff02]" condition="string.equals" value="fedcba123456  120078345678900011  " />
+
+    <parameter name="[diff01]" operation="set" value="f0123456781200780090001155" />
+    <parameter name="[diff02]" operation="set" value="fedcba123456120078345678900011" />
+    <parameter name="[result1]" operation="binary.difference" value="[diff01]" value2="[diff02]" />
+    <test parameter="[result1]" condition="string.equals" value="[result]" />
+    <!--test parameter="[diff01]" condition="string.equals" value="f0    12    3450780090dc" />
+    <test parameter="[diff02]" condition="string.equals" value="fedcba1200ff345678  9000" /-->
+    <parameter name="[result2]" operation="binary.difference" value="[diff02]" value2="[diff01]" />
+    <test parameter="[result2]" condition="string.equals" value="[result]" />
+    <!--test parameter="[diff01]" condition="string.equals" value="f0    12    3450780090dc" />
+    <test parameter="[diff02]" condition="string.equals" value="fedcba1200ff345678  9000" /-->
+    
+    <parameter name="[res]" operation="set" value="0EXXXX      XX      34XXXX      XX" />
+    <parameter name="[res1]" operation="binary.difference" value="f0123456781200780090001155" value2="fedcba123456120078345678900011" />
+    <test parameter="[res1]" condition="string.equals" value="[res]" />
+    <parameter name="[res2]" operation="binary.difference" value="fedcba123456120078345678900011" value2="f0123456781200780090001155" />
+    <test parameter="[res2]" condition="string.equals" value="[res]" />
+    
+</scenario>
