@@ -12,7 +12,7 @@
     <url>http://maven.apache.org</url>
         
     <properties>
-        <project.build.sourceEncoding>ISO-8859-15</project.build.sourceEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <target.mts.dir>${project.build.directory}/mts</target.mts.dir>
         <target.izpack.dir>${project.build.directory}/izpack</target.izpack.dir>
         <izpack.version>4.3.5</izpack.version>

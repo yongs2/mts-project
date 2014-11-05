@@ -90,7 +90,7 @@ public class Utils
 
     public static int readFromSocketStream(InputStream inputStream, byte[] tab) throws IOException{
         // GPASQUIERS: FIX
-        // Sur des InputStream de sockets TCP la mÈthode "read" peut s'arreter
+        // Sur des InputStream de sockets TCP la m√©thode "read" peut s'arreter
         // n'importe ou, meme si le nombre d'octets qu'on a demande n'a pas ete
         // lut. Il faut donc s'assurer de relancer la lecture sur ce stream
         // tant qu'on a pas obtenu le nombre d'octets voulu.
@@ -1065,118 +1065,118 @@ public class Utils
                 case '"':
                     sb.append("&quot;");
                     break;
-                case '‡':
+                case '√†':
                     sb.append("&agrave;");
                     break;
-                case '¿':
+                case '√Ä':
                     sb.append("&Agrave;");
                     break;
-                case '‚':
+                case '√¢':
                     sb.append("&acirc;");
                     break;
-                case '¬':
+                case '√Ç':
                     sb.append("&Acirc;");
                     break;
-                case '‰':
+                case '√§':
                     sb.append("&auml;");
                     break;
-                case 'ƒ':
+                case '√Ñ':
                     sb.append("&Auml;");
                     break;
-                case 'Â':
+                case '√•':
                     sb.append("&aring;");
                     break;
-                case '≈':
+                case '√Ö':
                     sb.append("&Aring;");
                     break;
-                case 'Ê':
+                case '√¶':
                     sb.append("&aelig;");
                     break;
-                case '∆':
+                case '√Ü':
                     sb.append("&AElig;");
                     break;
-                case 'Á':
+                case '√ß':
                     sb.append("&ccedil;");
                     break;
-                case '«':
+                case '√á':
                     sb.append("&Ccedil;");
                     break;
-                case 'È':
+                case '√©':
                     sb.append("&eacute;");
                     break;
-                case '…':
+                case '√â':
                     sb.append("&Eacute;");
                     break;
-                case 'Ë':
+                case '√®':
                     sb.append("&egrave;");
                     break;
-                case '»':
+                case '√à':
                     sb.append("&Egrave;");
                     break;
-                case 'Í':
+                case '√™':
                     sb.append("&ecirc;");
                     break;
-                case ' ':
+                case '√ä':
                     sb.append("&Ecirc;");
                     break;
-                case 'Î':
+                case '√´':
                     sb.append("&euml;");
                     break;
-                case 'À':
+                case '√ã':
                     sb.append("&Euml;");
                     break;
-                case 'Ô':
+                case '√Ø':
                     sb.append("&iuml;");
                     break;
-                case 'œ':
+                case '√è':
                     sb.append("&Iuml;");
                     break;
-                case 'Ù':
+                case '√¥':
                     sb.append("&ocirc;");
                     break;
-                case '‘':
+                case '√î':
                     sb.append("&Ocirc;");
                     break;
-                case 'ˆ':
+                case '√∂':
                     sb.append("&ouml;");
                     break;
-                case '÷':
+                case '√ñ':
                     sb.append("&Ouml;");
                     break;
-                case '¯':
+                case '√∏':
                     sb.append("&oslash;");
                     break;
-                case 'ÿ':
+                case '√ò':
                     sb.append("&Oslash;");
                     break;
-                case 'ﬂ':
+                case '√ü':
                     sb.append("&szlig;");
                     break;
-                case '˘':
+                case '√π':
                     sb.append("&ugrave;");
                     break;
-                case 'Ÿ':
+                case '√ô':
                     sb.append("&Ugrave;");
                     break;
-                case '˚':
+                case '√ª':
                     sb.append("&ucirc;");
                     break;
-                case '€':
+                case '√õ':
                     sb.append("&Ucirc;");
                     break;
-                case '¸':
+                case '√º':
                     sb.append("&uuml;");
                     break;
-                case '‹':
+                case '√ú':
                     sb.append("&Uuml;");
                     break;
-                case 'Æ':
+                case '¬Æ':
                     sb.append("&reg;");
                     break;
-                case '©':
+                case '¬©':
                     sb.append("&copy;");
                     break;
-                case 'Ä':
+                case '‚Ç¨':
                     sb.append("&euro;");
                     break;
                 // be carefull with this one (non-breaking whitee space)
