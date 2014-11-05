@@ -29,6 +29,8 @@ import com.devoteam.srit.xmlloader.core.Parameter;
 import com.devoteam.srit.xmlloader.core.coding.binary.Dictionary;
 import com.devoteam.srit.xmlloader.core.coding.binary.EnumerationField;
 import com.devoteam.srit.xmlloader.core.coding.binary.HeaderAbstract;
+import com.devoteam.srit.xmlloader.core.log.GlobalLogger;
+import com.devoteam.srit.xmlloader.core.log.TextEvent.Topic;
 
 import gp.utils.arrays.Array;
 import gp.utils.arrays.DefaultArray;
@@ -65,6 +67,7 @@ public class HeaderGTPPrime extends HeaderAbstract
     	
     	Array lengthArray = beginArray.subArray(2, 2);
     	this.length = (new Integer16Array(lengthArray).getValue());
+    	GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "HeaderGTPPrime.length=" + length);
 	}
     
     @Override
@@ -105,6 +108,12 @@ public class HeaderGTPPrime extends HeaderAbstract
         {
         	this.sequenceNumber = Integer.parseInt(attribute);
         }
+        
+        attribute = header.attributeValue("version");
+        if (attribute != null)
+        {
+        	this.version = Integer.parseInt(attribute);
+        }
     }
 
 	@Override
@@ -116,6 +125,7 @@ public class HeaderGTPPrime extends HeaderAbstract
         {
         	str += this.label + ":";
         }
+        GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "HeaderGTPPrime.toXml.length=" + length);
         str += this.type + "\""; 
         str += " sequenceNumber=\"" + this.sequenceNumber + "\"";
         str += " length=\"" + this.length + "\"";
@@ -139,6 +149,7 @@ public class HeaderGTPPrime extends HeaderAbstract
         supArray.addLast(new Integer08Array(type));
         supArray.addLast(new Integer16Array(length));
         supArray.addLast(new Integer16Array(sequenceNumber));
+        GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "HeaderGTPPrime.encodeToArray.length=" + length);
 
         return supArray;
     }
@@ -147,7 +158,8 @@ public class HeaderGTPPrime extends HeaderAbstract
 	public int calculateHeaderSize()
     {
 		int size = 0;
-		size += 2;
+		//size += 2;	// Header 에서 SequenceNumber 는 포함하고, Length 는 Payload 길이만을 의미한다.
+		GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "HeaderGTPPrime.calculateHeaderSize.size=" + size);
 		return size;
     }
 	
