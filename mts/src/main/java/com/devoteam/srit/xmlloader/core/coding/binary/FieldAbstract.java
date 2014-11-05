@@ -104,6 +104,10 @@ public abstract class FieldAbstract
         {
         	newField = new BinaryField(fieldRoot);
         }
+        else if (type.equalsIgnoreCase("length2_binary")) 
+        {
+        	newField = new Length2BinaryField(fieldRoot);
+        }
         else if (type.equalsIgnoreCase("number_bcd")) 
         {
         	newField = new NumberBCDField(fieldRoot);
