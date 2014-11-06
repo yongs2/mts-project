@@ -158,21 +158,25 @@ public class MessageGTP
 		int version = array.getBits(0, 3);
 		int protocolType = array.getBits(3, 1);	// GTPv1, GTP' 은 사용하나, GTPv2 는 Piggybacking Flag 로 사용
 		int spareBit2 = array.getBits(5, 2);	// GTPv2 는 사용안하나, GTP' 은 11 로 고정
+		int headerSize = 4;
 		
 		GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "MessageGTP.decodeFromStream: version=" + version + ", protocolType=" + protocolType + ", spareBit2=" + spareBit2);
 		if((protocolType == 0) && (spareBit2 == 3))
 		{	// GTP'
 			this.header = new HeaderGTPPrime(array);
+			headerSize = 6;	// GTP'의 Header 는 SequenceNumber 까지 포함해서 6 bytes 임. 
 		}
 		else if(protocolType == 1)
 		{	// GTP
 			if (version == 1)
 			{
 				this.header = new HeaderGTPV1(array);
+				headerSize = 4;
 			}
 			else
 			{ // (version == 2)
 				this.header = new HeaderGTPV2(array);
+				headerSize = 4;
 			}
 		} 
 		 
@@ -190,7 +194,7 @@ public class MessageGTP
 		
 		array.addLast(new DefaultArray(fieldBuffer));
 		int offset = this.header.decodeFromArray((Array) array, "", dictionary);
-		int fieldLength = this.header.getLength() - offset + 4;
+		int fieldLength = this.header.getLength() - offset + headerSize; 
 		
 		Array fieldArray = new DefaultArray(0);
 		if (fieldLength > 0)
@@ -209,21 +213,25 @@ public class MessageGTP
 		int messageType = array.getBits(8, 8);		
 		int protocolType = array.getBits(3, 1);	// GTPv1, GTP' 은 사용하나, GTPv2 는 Piggybacking Flag 로 사용
 		int spareBit2 = array.getBits(5, 2);	// GTPv2 는 사용안하나, GTP' 은 11 로 고정
+		int headerSize = 4;
 		
 		GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "MessageGTP.decodeFromBytes: version=" + version + ", protocolType=" + protocolType + ", spareBit2=" + spareBit2);
 		if((protocolType == 0) && (spareBit2 == 3))
 		{	// GTP'
 			this.header = new HeaderGTPPrime(array);
+			headerSize = 6;	// GTP'의 Header 는 SequenceNumber 까지 포함해서 6 bytes 임. 
 		}
 		else if(protocolType == 1)
 		{	// GTP
 			if (version == 1)
 			{
 				this.header = new HeaderGTPV1(array);
+				headerSize = 4;
 			}
 			else
 			{ // (version == 2)
 				this.header = new HeaderGTPV2(array);
+				headerSize = 4;
 			}
 		} 
 		 
@@ -231,7 +239,7 @@ public class MessageGTP
 		initDictionary(this.syntax);
 		
 		int offset = this.header.decodeFromArray(array, "", dictionary);		
-		int fieldLength = this.header.getLength() - offset + 4;
+		int fieldLength = this.header.getLength() - offset + headerSize;
 		if (fieldLength > 1500)
 			fieldLength -= (fieldLength - 1500);
 
@@ -252,6 +260,7 @@ public class MessageGTP
 	/** Get a parameter from the message */
 	public void getParameter(Parameter var, String[] params, String path) throws Exception 
 	{
+		GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "MessageGTP.getParameter.param[0]=" + params[0] + ", path=" + path);
 	    if (params.length >= 2 && params[0].equalsIgnoreCase("header")) 
 	    {
 	        this.header.getParameter(var, params[1]);
@@ -295,6 +304,7 @@ public class MessageGTP
 	    if (this.tpdu != null)
 	    	array.addLast(this.tpdu.encodeToArray().clone());
 	    
+	    GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "MessageGTP.encodeToArray, array.length=" + array.length + ", header.size=" + header.calculateHeaderSize() + ", imsiV1=" + imsiV1);
 	    header.setLength(array.length + header.calculateHeaderSize() + imsiV1);
 	    array.addFirst(header.encodeToArray());
 	    return array;
@@ -333,6 +343,7 @@ public class MessageGTP
 	
 	    int msglength = 0;
 	    msglength = header.encodeToArray().length;
+	    GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "MessageGTP.getLength.1.header.length=" + msglength);
 	    Iterator<ElementAbstract> iter = this.elements.iterator();
 	    while (iter.hasNext())
 	    {
@@ -340,6 +351,7 @@ public class MessageGTP
 	        msglength += elem.encodeToArray().length;
 	
 	    }
+	    GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "MessageGTP.getLength.2.msglength=" + msglength);
 	    return msglength;
 	}
 	
