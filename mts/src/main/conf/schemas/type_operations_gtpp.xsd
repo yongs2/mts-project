@@ -282,8 +282,10 @@
     <xs:complexType name="headerGTPPrimeType">
         <xs:attribute name="version" type="xs:string" />
         <xs:attribute name="protocolType" type="xs:string"/>
-        <xs:attribute name="length" type="xs:string" />
+        <xs:attribute name="spare" type="xs:string" />
+        <xs:attribute name="headerLengthBit" type="xs:string" />
         <xs:attribute name="type" type="xs:string" use="required"/>
+        <xs:attribute name="length" type="xs:string" />
         <xs:attribute name="sequenceNumber" type="xs:string" use="required" />
     </xs:complexType>
 

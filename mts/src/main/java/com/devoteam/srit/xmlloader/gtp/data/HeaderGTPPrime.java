@@ -49,6 +49,8 @@ public class HeaderGTPPrime extends HeaderAbstract
     private int type;
 	private String label;
     private int sequenceNumber;
+    private int spare;
+    private int headerLengthBit;
     
     public HeaderGTPPrime() 
     {
@@ -61,6 +63,8 @@ public class HeaderGTPPrime extends HeaderAbstract
     	this();
         this.version = beginArray.getBits(0,3);
         this.protocolType = beginArray.getBits(3,1);
+        this.spare = beginArray.getBits(4, 3);//=> 111 in bits
+        this.headerLengthBit = beginArray.getBits(7, 1); //=> 1 in bits (1 in version 0, 0 in version 1 or 2)
         
     	Array typeArray = beginArray.subArray(1, 1);
     	this.type= (new Integer08Array(typeArray).getValue());
@@ -114,6 +118,18 @@ public class HeaderGTPPrime extends HeaderAbstract
         {
         	this.version = Integer.parseInt(attribute);
         }
+        
+        attribute = header.attributeValue("spare");
+        if (attribute != null)
+        {
+        	this.spare = Integer.parseInt(attribute);
+        }
+        
+        attribute = header.attributeValue("headerLengthBit");
+        if (attribute != null)
+        {
+        	this.headerLengthBit = Integer.parseInt(attribute);
+        }
     }
 
 	@Override
@@ -131,6 +147,8 @@ public class HeaderGTPPrime extends HeaderAbstract
         str += " length=\"" + this.length + "\"";
         str += " version=\"" + this.version + "\"";        
         str += " protocolType=\"" + this.protocolType + "\"";
+        str += " spare=\"" + this.spare + "\"";
+        str += " headerLengthBit=\"" + this.headerLengthBit + "\"";
         str += "/>";
         return str;
     }
@@ -143,7 +161,9 @@ public class HeaderGTPPrime extends HeaderAbstract
         DefaultArray firstByte = new DefaultArray(1);//first byte data
         firstByte.setBits(0, 3, version);
         firstByte.setBits(3, 1, protocolType);
-        firstByte.setBits(4, 4, 15);//=> 1111 in bits
+        //firstByte.setBits(4, 4, 15);//=> 1111 in bits
+        firstByte.setBits(4, 3, spare);//=> 111 in bits
+        firstByte.setBits(7, 1, headerLengthBit); //=> 1 in bits (1 in version 0, 0 in version 1 or 2)
         supArray.addFirst(firstByte);
 
         supArray.addLast(new Integer08Array(type));
@@ -205,7 +225,15 @@ public class HeaderGTPPrime extends HeaderAbstract
         else if (param.equalsIgnoreCase("sequenceNumber"))
         {
             var.add(this.sequenceNumber);
-        }      	
+        }
+        else if (param.equalsIgnoreCase("spare"))
+        {
+            var.add(this.spare);
+        } 
+        else if (param.equalsIgnoreCase("headerLengthBit"))
+        {
+            var.add(this.headerLengthBit);
+        } 
         else
         {
         	Parameter.throwBadPathKeywordException("header." + param);
