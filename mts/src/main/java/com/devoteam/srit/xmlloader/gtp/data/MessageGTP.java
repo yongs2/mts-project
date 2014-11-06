@@ -30,6 +30,8 @@ import com.devoteam.srit.xmlloader.core.coding.binary.EnumerationField;
 import com.devoteam.srit.xmlloader.core.coding.binary.HeaderAbstract;
 import com.devoteam.srit.xmlloader.core.coding.binary.XMLDoc;
 import com.devoteam.srit.xmlloader.core.exception.ExecutionException;
+import com.devoteam.srit.xmlloader.core.log.GlobalLogger;
+import com.devoteam.srit.xmlloader.core.log.TextEvent.Topic;
 import com.devoteam.srit.xmlloader.core.utils.Utils;
 
 import gp.utils.arrays.Array;
@@ -43,6 +45,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.dom4j.Element;
 
 
@@ -153,19 +156,25 @@ public class MessageGTP
 		array.addFirst(new DefaultArray(begin));
 		
 		int version = array.getBits(0, 3);
-		// int messageType = beginArray.getBits(8, 8);
-		if (version == 0)
-		{
-			 this.header = new HeaderGTPPrime(array);
+		int protocolType = array.getBits(3, 1);	// GTPv1, GTP' 은 사용하나, GTPv2 는 Piggybacking Flag 로 사용
+		int spareBit2 = array.getBits(5, 2);	// GTPv2 는 사용안하나, GTP' 은 11 로 고정
+		
+		GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "MessageGTP.decodeFromStream: version=" + version + ", protocolType=" + protocolType + ", spareBit2=" + spareBit2);
+		if((protocolType == 0) && (spareBit2 == 3))
+		{	// GTP'
+			this.header = new HeaderGTPPrime(array);
 		}
-		else if (version == 1)
-		{
-			 this.header = new HeaderGTPV1(array);
-		}
-		else if (version == 2)
-		{
-			 this.header = new HeaderGTPV2(array);
-		}
+		else if(protocolType == 1)
+		{	// GTP
+			if (version == 1)
+			{
+				this.header = new HeaderGTPV1(array);
+			}
+			else
+			{ // (version == 2)
+				this.header = new HeaderGTPV2(array);
+			}
+		} 
 		 
 		this.syntax = this.header.getSyntax();
 		initDictionary(this.syntax);
@@ -198,19 +207,25 @@ public class MessageGTP
 		 
 		int version = array.getBits(0, 3);
 		int messageType = array.getBits(8, 8);		
-		 
-		if (version == 0)
-		{
-			 this.header = new HeaderGTPPrime(array);
+		int protocolType = array.getBits(3, 1);	// GTPv1, GTP' 은 사용하나, GTPv2 는 Piggybacking Flag 로 사용
+		int spareBit2 = array.getBits(5, 2);	// GTPv2 는 사용안하나, GTP' 은 11 로 고정
+		
+		GlobalLogger.instance().getApplicationLogger().debug(Topic.PROTOCOL, "MessageGTP.decodeFromBytes: version=" + version + ", protocolType=" + protocolType + ", spareBit2=" + spareBit2);
+		if((protocolType == 0) && (spareBit2 == 3))
+		{	// GTP'
+			this.header = new HeaderGTPPrime(array);
 		}
-		else if (version == 1)
-		{
-			 this.header = new HeaderGTPV1(array);
-		}
-		else if (version == 2)
-		{
-			 this.header = new HeaderGTPV2(array);
-		}
+		else if(protocolType == 1)
+		{	// GTP
+			if (version == 1)
+			{
+				this.header = new HeaderGTPV1(array);
+			}
+			else
+			{ // (version == 2)
+				this.header = new HeaderGTPV2(array);
+			}
+		} 
 		 
 		this.syntax = this.header.getSyntax();
 		initDictionary(this.syntax);
